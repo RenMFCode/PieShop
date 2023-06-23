@@ -1,0 +1,16 @@
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\PieShop.InventoryManagement.exe
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\PieShop.InventoryManagement.deps.json
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\PieShop.InventoryManagement.runtimeconfig.json
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\PieShop.InventoryManagement.runtimeconfig.dev.json
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\PieShop.InventoryManagement.dll
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\ref\PieShop.InventoryManagement.dll
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\bin\Debug\net5.0\PieShop.InventoryManagement.pdb
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.csprojAssemblyReference.cache
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.GeneratedMSBuildEditorConfig.editorconfig
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.AssemblyInfoInputs.cache
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.AssemblyInfo.cs
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.csproj.CoreCompileInputs.cache
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.dll
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\ref\PieShop.InventoryManagement.dll
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.pdb
+C:\Renato\PieShop.InventoryManagement\PieShop.InventoryManagement\obj\Debug\net5.0\PieShop.InventoryManagement.genruntimeconfig.cache
