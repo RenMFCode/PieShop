@@ -15,20 +15,12 @@ namespace PieShop.InventoryManagement
             Console.Clear();
         }
         static void Main(string[] args)
-        {
-            Product.ChangeStockThreshold(15);
-            
-            /* Price samplePrice = new Price(10,Currency.Euro);
-            Product p1 = new Product(1,"Sugar", "Lorem cenas", samplePrice, UnitType.PerKg, 100);
-            p1.IncreaseStock(10);
-            p1.Description = "Descrip";
-
-            var p2 = new Product(2, "Cake", "cenas", samplePrice, UnitType.PerItem, 20); */
-            
+        {         
             PrintWelcome();
             Utilities.InitializeStock();
             Utilities.ShowMainMenu();
-
+            Console.WriteLine("Application shutting down ...");
+            Console.ReadLine();
         }
     }
 }

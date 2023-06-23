@@ -50,7 +50,7 @@ namespace PieShop.InventoryManagement
                     ShowOrderManagementMenu();
                     break;
                 case "3":
-                    //ShowSettingsMenu();
+                    ShowSettingsMenu();
                     break;
                 case "4":
                     // SaveAllData();
@@ -63,9 +63,128 @@ namespace PieShop.InventoryManagement
             }
         }
 
+        private static void ShowSettingsMenu()
+        {
+            string? userSelection;
+
+            do
+            {
+                Console.ResetColor();
+                Console.Clear();
+                Console.WriteLine("Settings");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("What do you want to do? ");
+                Console.ResetColor();
+
+                Console.WriteLine("1. Change stock threshold");
+                Console.WriteLine("0. Back to main menu");
+
+                Console.Write("Your selection");
+                userSelection = Console.ReadLine();
+
+                switch (userSelection)
+                {
+                    case "1":
+                        ShowChangeStockThreshold();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option");
+                        break;
+                }
+
+            }
+            while (userSelection != "0");
+        }
+
+        private static void ShowChangeStockThreshold()
+        {
+            Console.WriteLine($"Enter the new stock threshold (current value: {Product.StockThreshold} This applies to all products)");
+            Console.WriteLine("New value");
+            int newValue = int.Parse(Console.ReadLine() ?? "0");
+            Product.StockThreshold = newValue;
+            Console.WriteLine($"New stock threshold {Product.StockThreshold}");
+
+            foreach (var product in inventory)
+            {
+                product.UpdateLowStock();
+            }
+            Console.ReadLine();
+        }
+
         private static void ShowOrderManagementMenu()
         {
-            throw new NotImplementedException();
+            string? userSelection = string.Empty;
+
+            do
+            {
+                Console.ResetColor();
+                Console.Clear();
+                Console.WriteLine("Select an action");
+                Console.WriteLine("1. Open order overview");
+                Console.WriteLine("2. Add new order");
+                Console.WriteLine("0. Back to main menu");
+
+                Console.Write("Your selection");
+
+                switch (userSelection)
+                {
+                    case "1":
+                        ShowOpenOrderOverview();
+                        break;
+                    case "2":
+                        ShowAddNewOrder();
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option");
+                        break;
+                }
+
+            }
+            while (userSelection != "0");
+            ShowMainMenu();
+        }
+
+        private static void ShowAddNewOrder()
+        {
+            Order newOrder = new Order();
+            string? selectedProductId = string.Empty;
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Creating a new order");
+            Console.ResetColor();
+
+            do
+            {
+                ShowAllProductsOverview();
+
+                Console.WriteLine("Which product do you want to order? Enter 0 to stop adding");
+                Console.WriteLine("Enter the ID of product: ");
+
+                selectedProductId = Console.ReadLine();
+                if (selectedProductId != "0")
+                {
+                    Product? selectedProduct = inventory.Where(p => p.Id == int.Parse(selectedProductId)).FirstOrDefault();
+                    if (selectedProduct != null)
+                    {
+                        Console.WriteLine("How many do you want to order? ");
+                        int amountOrdered = int.Parse(Console.ReadLine() ?? "0");
+
+                        OrderItem orderItem = new OrderItem
+                        {
+                            ProductId = selectedProduct.Id,
+                            ProductName = selectedProduct.Name,
+                            AmountOrdered = amountOrdered
+                        };
+                    }
+                }
+            } while (selectedProductId != "0");
+
+            Console.WriteLine("Creating order...");
+            orders.Add(newOrder);
+
+            Console.WriteLine("Order created.");
+            Console.ReadLine();
+
         }
 
         private static void ShowInventoryManagementMenu()
@@ -77,7 +196,7 @@ namespace PieShop.InventoryManagement
             ShowAllProductsOverview();
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("What do you want to do?");
+            Console.WriteLine("\nWhat do you want to do?");
             Console.ResetColor();
 
             Console.WriteLine("1. View details");
@@ -86,7 +205,7 @@ namespace PieShop.InventoryManagement
             Console.WriteLine("4. View products with low stock");
             Console.WriteLine("0. Back");
 
-            Console.Write("Your selection");
+            Console.Write("Your selection: ");
 
             string? userSelection = Console.ReadLine();
 
@@ -102,13 +221,27 @@ namespace PieShop.InventoryManagement
                     //ShowCloneExistingProduct();
                     break;
                 case "4":
-                    //ShowProductsLowOnStock();
+                    ShowProductsLowOnStock();
                     break;
                 case "0":
-                    break;
+                    break; // It will not enter in anything and just close the app
                 default:
                     Console.WriteLine("Invalid option");
                     break;
+            }
+        }
+
+        private static void ShowProductsLowOnStock()
+        {
+            List<Product> lowOnStockProducts = inventory.Where(p => p.IsBelowStockThreshold).ToList();
+            if (lowOnStockProducts.Count > 0)
+            {
+                Console.WriteLine("The following items are low on stock!");
+                foreach (var product in lowOnStockProducts)
+                {
+                    Console.WriteLine(product.DisplayDetailsShort());
+                    Console.WriteLine();
+                }
             }
         }
 
@@ -146,13 +279,50 @@ namespace PieShop.InventoryManagement
 
         private static void ShowAllProductsOverview()
         {
-
             foreach(var product in inventory)
             {
                 Console.Write(product.DisplayDetailsShort());
-            }
-            
+            }   
+        }
 
+        private static void ShowOpenOrderOverview()
+        {
+            // check to handle fulfilled orders
+            ShowFulfilledOrders();
+
+            if (orders.Count > 0)
+            {
+                Console.WriteLine("Open orders: ");
+                foreach(var order in orders)
+                {
+                    Console.WriteLine(order.ShowOrderDetails());
+                    Console.ReadLine();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Tehre are no open orders");
+            }
+        }
+
+        private static void ShowFulfilledOrders()
+        {
+            Console.WriteLine("Checking fulfilled orders.");
+            foreach (var order in orders)
+            {
+                if (!order.Fulfilled && order.OrderFulfilmentDate < DateTime.Now) //fulfill the order
+                {
+                    foreach (var orderItem in order.OrderItems)
+                    {
+                        Product? selectedProduct = inventory.Where(p => p.Id == orderItem.ProductId).FirstOrDefault();
+                        if (selectedProduct != null)
+                            selectedProduct.IncreaseStock(orderItem.AmountOrdered);
+                    }
+                    order.Fulfilled = true;
+                }
+            }
+            orders.RemoveAll(o => o.Fulfilled);
+            Console.WriteLine("Fulfilled order checked");
         }
     }
 }

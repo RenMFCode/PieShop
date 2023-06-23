@@ -88,9 +88,7 @@ namespace PieShop.InventoryManagement
             if (items <= AmountInStock)
             {
                 AmountInStock -= items;
-
                 UpdateLowStock();
-
                 Log($"Amount stock updated! Now {AmountInStock} items in stock.");
             }
             else
@@ -117,8 +115,6 @@ namespace PieShop.InventoryManagement
                 AmountInStock = maxItemsInStock;
                 Log("More items than expected, set the max number");
             }
-            
-
             if (AmountInStock > StockThreshold) 
             {
                 IsBelowStockThreshold = false;
@@ -140,7 +136,7 @@ namespace PieShop.InventoryManagement
             Log(reason);
         }
 
-        private void UpdateLowStock()
+        public void UpdateLowStock()
         {
             if (AmountInStock < StockThreshold) // for now fixed value
             {
@@ -150,7 +146,7 @@ namespace PieShop.InventoryManagement
 
         public string DisplayDetailsShort()
         {
-            return $"{Id}. {Name} \n{AmountInStock} utems in stock.";
+            return $"\n{Id}. {Name} \n{AmountInStock} items in stock.";
         }
 
         public string DisplayDetailsFull()
