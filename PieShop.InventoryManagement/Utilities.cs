@@ -250,10 +250,10 @@ namespace PieShop.InventoryManagement
             string? userSelection = String.Empty; 
             Console.Write("Enter the ID of product");
             string? selectedProductId = Console.ReadLine();
-            if (selectedProductId is not null)
+            if (selectedProductId != null)
             {
                 Product? selectedProduct = inventory.Where(p => p.Id == int.Parse(selectedProductId)).FirstOrDefault();
-                if (selectedProduct is not null)
+                if (selectedProduct != null)
                 {
                     Console.WriteLine(selectedProduct.DisplayDetailsFull());
                     Console.WriteLine("1. Use");
@@ -287,7 +287,7 @@ namespace PieShop.InventoryManagement
 
         private static void ShowOpenOrderOverview()
         {
-            // check to handle fulfilled orders
+            // Check to handle fulfilled orders
             ShowFulfilledOrders();
 
             if (orders.Count > 0)

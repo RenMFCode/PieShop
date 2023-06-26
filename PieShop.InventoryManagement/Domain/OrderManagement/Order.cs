@@ -19,7 +19,7 @@ namespace PieShop.InventoryManagement.Domain.OrderManagement
             orderDetails.Append($"Order ID: {Id}");
             orderDetails.Append($"Order fulfilment date: {OrderFulfilmentDate.ToShortTimeString()}");
 
-            if (OrderItems is not null)
+            if (OrderItems != null)
             {
                 foreach (OrderItem item in OrderItems)
                 {
