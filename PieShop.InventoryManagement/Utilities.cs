@@ -1,5 +1,6 @@
 ﻿using PieShop.InventoryManagement.Domain.General;
 using PieShop.InventoryManagement.Domain.OrderManagement;
+using PieShop.InventoryManagement.Domain.ProductManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,22 +16,28 @@ namespace PieShop.InventoryManagement
 
         internal static void InitializeStock() //Mock implementation
         {
-            Product.ChangeStockThreshold(15);
-            Price samplePrice = new Price(10, Currency.Euro);
-            Product p1 = new Product(1, "Sugar", "Lorem cenas", samplePrice, UnitType.PerKg, 100);
-            p1.IncreaseStock(10);
-            p1.Description = "Descrip";
+            BoxedProduct bp = new BoxedProduct(6, "Eggs", "Lorem cenas", new Price(10, Currency.Euro), 100, 6);
+            bp.IncreaseStock(100);
+            bp.UseProduct(10);
 
-            var p2 = new Product(2, "Cake", "cenas", samplePrice, UnitType.PerItem, 20);
+            inventory.Add(bp);
 
-            inventory.Add(p1);
-            inventory.Add(p2);
+            ProductRepository productRepository = new();
+            inventory = productRepository.LoadProductsFromFile();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Loaded {inventory.Count} products!");
+
+            Console.WriteLine("Press enter to continue!");
+            Console.ResetColor();
+            Console.ReadLine();
         }
 
         internal static void ShowMainMenu()
         {
             Console.ResetColor();
             Console.Clear();
+            Console.WriteLine("Main Menu");
             Console.WriteLine("1. Inventory");
             Console.WriteLine("2. Order");
             Console.WriteLine("3. Settings");
@@ -215,7 +222,7 @@ namespace PieShop.InventoryManagement
                     ShowDetailsAndUseProduct();
                     break;
                 case "2":
-                    //ShowCreateNewProduct();
+                    ShowCreateNewProduct();
                     break;
                 case "3":
                     //ShowCloneExistingProduct();
@@ -228,6 +235,98 @@ namespace PieShop.InventoryManagement
                 default:
                     Console.WriteLine("Invalid option");
                     break;
+            }
+        }
+
+        private static void ShowCreateNewProduct()
+        {
+            UnitType unitType = UnitType.PerItem; //default
+            int numberInBox = 0;
+            int newId = 0;
+
+            Console.WriteLine("What kind of product?");
+            Console.WriteLine("1. Regular\n 2. Bulk\n 3. Fresh\n 4. Boxed");
+            Console.Write("Your Selection: ");
+
+            var productType = Console.ReadLine();
+
+            if (productType != "1" && productType != "2" && productType != "3" && productType != "4")
+            {
+                Console.WriteLine("Invalid selection");
+                return;
+            }
+
+            Product? newProd = null;
+
+            Console.WriteLine("Enter the name of the product: ");
+            string name = Console.ReadLine();
+            Console.WriteLine("Enter the price :");
+            double price = double.Parse(Console.ReadLine() ?? "0.0");
+
+            ShowAllCurrencies();
+
+            Console.WriteLine("Select the currency: ");
+            Currency currency = (Currency)Enum.Parse(typeof(Currency), Console.ReadLine() ?? "1");
+
+            Console.WriteLine("Description: ");
+            string description = Console.ReadLine() ?? String.Empty;
+
+            if (productType == "1")
+            {
+                ShowAllUnitTypes();
+                Console.Write("Select the unit type");
+                unitType = (UnitType)Enum.Parse(typeof(UnitType), Console.ReadLine() ?? "1");
+            }
+            
+            Console.WriteLine("Enter the maximum number in stock for this product: ");
+            int maxInStock = int.Parse(Console.ReadLine() ?? "0");
+
+            if (inventory.Count != 0)
+                newId = inventory.Max(p => p.Id) + 1; // Find the highest and Increment 1 
+
+            switch (productType)
+            {
+                case "1":
+                    newProd = new Product(newId, name, description, new Price(price, currency), unitType, maxInStock) ;
+                    break;
+                case "2":
+                    newProd = new BulkProduct(newId++, name, description, new Price(price, currency), maxInStock);
+                    break;
+                case "3":
+                    Console.Write("Enter the number of items per box: ");
+                    numberInBox = int.Parse(Console.ReadLine() ?? "0");
+                    newProd = new FreshProduct(newId++, name, description, new Price(price, currency), unitType, maxInStock, numberInBox);
+                    break;
+                case "4":
+                    Console.Write("Enter the number of items per box: ");
+                    numberInBox = int.Parse(Console.ReadLine() ?? "0");
+                    newProd = new BoxedProduct(newId++, name, description, new Price(price, currency), maxInStock, numberInBox);
+                    break;
+                default:
+                    Console.WriteLine("Invalid product");
+                    break;
+            }
+            if (newProd != null)
+                inventory.Add(newProd);
+        }
+
+        private static void ShowAllUnitTypes()
+        {
+            int i = 1;
+            foreach (string name in Enum.GetNames(typeof(UnitType))) 
+            { 
+                Console.WriteLine($"{i}. {name}");
+                i++;
+            }
+        }
+
+        private static void ShowAllCurrencies()
+        {
+            int i = 1;
+            foreach (string name in Enum.GetNames(typeof(Currency)))
+            {
+                Console.WriteLine($"{i}. {name}");
+                i++;
             }
         }
 
@@ -247,6 +346,8 @@ namespace PieShop.InventoryManagement
 
         private static void ShowDetailsAndUseProduct()
         {
+            ShowAllProductsOverview();
+
             string? userSelection = String.Empty; 
             Console.Write("Enter the ID of product");
             string? selectedProductId = Console.ReadLine();

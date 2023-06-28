@@ -8,7 +8,7 @@ namespace PieShop.InventoryManagement
 {
     internal class ProductRepository
     {
-        private string directory = @"C:\Renato\PieShop.InventoryManagement\storage";
+        private string directory = @"C:\Renato\PieShop.InventoryManagement\storage\";
         private string productsFileName = "products.txt";
 
         public List<Product> LoadProductsFromFile()
@@ -52,9 +52,7 @@ namespace PieShop.InventoryManagement
                     products.Add(product);
 
                 }
-
             }
-
             catch (IndexOutOfRangeException iex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;

@@ -11,7 +11,7 @@ namespace PieShop.InventoryManagement
         private string? description; // ? might be empty in the future
         private Price price;
 
-        private int maxItemsInStock = 0;
+        protected int maxItemsInStock = 0;
 
         public static int StockThreshold = 5;
 
@@ -26,7 +26,7 @@ namespace PieShop.InventoryManagement
             this.name = name;
         }
 
-        public Product(int id, string name, string description, Price price, UnitType unitType, int maxAmountInStock) : this(id, name)
+        public Product(int id, string name, string? description, Price price, UnitType unitType, int maxAmountInStock) : this(id, name)
         {
             Id = id;
             Name = name;
@@ -72,9 +72,9 @@ namespace PieShop.InventoryManagement
         }
 
         public UnitType UnitType { get; set; }
-        public bool IsBelowStockThreshold { get; set; } 
-        public int AmountInStock { get; set; }
-        public int Id { get => id; set => id = value; }
+        public bool IsBelowStockThreshold { get; protected set; } 
+        public int AmountInStock { get; protected set; }
+        public int Id { get; set; }
         internal Price Price { get; set; }
 
         public static void ChangeStockThreshold(int newStockThreshold)
@@ -83,7 +83,7 @@ namespace PieShop.InventoryManagement
                 StockThreshold = newStockThreshold;
         }
 
-        public void UseProduct(int items)
+        public /*virtual - to override in the subclass*/ virtual void UseProduct(int items)
         {
             if (items <= AmountInStock)
             {
@@ -98,12 +98,12 @@ namespace PieShop.InventoryManagement
         }
 
 
-        public void IncreaseStock()
+        public virtual void IncreaseStock()
         {
             AmountInStock++;
         }
 
-        public void IncreaseStock(int amount)
+        public virtual void IncreaseStock(int amount)
         {
             int newStock = AmountInStock + amount;
             if (newStock <= maxItemsInStock)
@@ -121,7 +121,7 @@ namespace PieShop.InventoryManagement
             }
         }
 
-        private void DecreaseStock(int items, string reason)
+        protected virtual void DecreaseStock(int items, string reason)
         {
             if (items <= AmountInStock)
             {
@@ -136,7 +136,7 @@ namespace PieShop.InventoryManagement
             Log(reason);
         }
 
-        public void UpdateLowStock()
+        public virtual void UpdateLowStock()
         {
             if (AmountInStock < StockThreshold) // for now fixed value
             {
@@ -144,12 +144,12 @@ namespace PieShop.InventoryManagement
             }
         }
 
-        public string DisplayDetailsShort()
+        public virtual string DisplayDetailsShort()
         {
             return $"\n{Id}. {Name} \n{AmountInStock} items in stock.";
         }
 
-        public string DisplayDetailsFull()
+        public virtual string DisplayDetailsFull()
         {
             // we can comment this code, it's reused in the method in below - Overload
             /*   StringBuilder sb = new();
@@ -163,7 +163,7 @@ namespace PieShop.InventoryManagement
             return DisplayDetailsFull("");
         }
 
-        public string DisplayDetailsFull(string extraDetails)
+        public virtual string DisplayDetailsFull(string extraDetails)
         {
             StringBuilder sb = new();
             sb.Append($"{Id} - {Name} \n {Description}\n{AmountInStock}\n {Price}  ...");
@@ -176,7 +176,7 @@ namespace PieShop.InventoryManagement
             return sb.ToString();
         }
 
-        private void Log(string message)
+        protected void Log(string message)
         {
             Console.WriteLine(message);
         }
